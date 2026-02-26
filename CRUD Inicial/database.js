@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '1234', // Cambiar por la real
+    password: 'root', // Cambiar por la real
     database: 'crud_node'
 });
 
