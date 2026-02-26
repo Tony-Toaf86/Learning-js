@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Pedidos</title>
+    <link rel="stylesheet" href="">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff3cd;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 500px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #856404;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            background-color: #ffc107;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: #e0a800;
+        }
+
+        #resultado {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Gestión de Pedidos</h1>
+        <form id="pedidoForm">
+            <input type="hidden" id="pedidoId">
+            <div class="form-group">
+                <label for="cliente">Cliente:</label>
+                <select id="cliente" required></select>
+            </div>
+            <div class="form-group">
+                <label for="producto">Producto:</label>
+                <select id="producto" required></select>
+            </div>
+            <div class="form-group">
+                <label for="cantidad">Cantidad:</label>
+                <input type="number" id="cantidad" required min="1">
+            </div>
+            <div class="form-actions">
+                <button type="submit" id="btnGuardar">Guardar</button>
+                <button type="button" id="btnActualizar">Actualizar</button>
+                <button type="button" id="btnEliminar">Eliminar</button>
+                <button type="button" id="btnListar">Listar</button>
+            </div>
+        </form>
+        <div id="resultado"></div>
+    </div>
+
+    <script src="app.pedidos.js"></script>
+</body>
+
+</html>

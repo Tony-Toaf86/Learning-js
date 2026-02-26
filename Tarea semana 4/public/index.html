@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD 3 Tablas</title>
+    <style>
+        /* Reset y tipografía */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to right, #f9f9f9, #e0f7fa);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        h2 {
+            color: #00796b;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        h3 {
+            color: #004d40;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Contenedor de enlaces */
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        a {
+            text-decoration: none;
+            background-color: #00796b;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 18px;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        a:hover {
+            background-color: #004d40;
+            transform: translateY(-3px);
+        }
+
+        /* Responsivo */
+        @media (max-width: 500px) {
+            a {
+                font-size: 16px;
+                padding: 12px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h2>ALUMNO: TONY OMAR ALONZO FIGUEROA</h2>
+    <h2>CUENTA: 202600750</h2>
+
+    <h3>CRUD con 3 tablas relacionadas (formularios web en 3 pantallas)</h3>
+
+    <div class="links">
+        <a href="formulario/formulario.clientes.html">CLIENTES  </a>
+        <a href="formulario/formulario.productos.html">PRODUCTOS</a>
+        <a href="formulario/formulario.pedidos.html">PEDIDOS</a>
+    </div>
+</body>
+
+</html>
