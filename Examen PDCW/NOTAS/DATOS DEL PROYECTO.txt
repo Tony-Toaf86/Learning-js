@@ -1,0 +1,30 @@
+4. Gestión de cooperativas de ahorro
+Enunciado:
+Crear un sistema CRUD para Socios y Aportaciones. Cada socio puede
+realizar múltiples aportaciones periódicas.
+
+Lo que deben hacer:
+• Crear base de datos con tablas Socios y Aportaciones.
+• API REST en Node.js y Express con CRUD completo.
+• Validar campos: nombre de socio obligatorio, monto de aportación > 0,
+fecha válida.
+
+• Interfaz gráfica con formularios:
+o Cajas de texto para nombre y dirección del socio.
+o Campo numérico para monto de aportación.
+o Lista desplegable para tipo de aportación (mensual,
+extraordinaria).
+
+Entregables:
+
+• Código fuente con documentación.
+• Video explicando y ejecutando el programa.
+• Pruebas en Postman mostrando CRUD.
+• Interfaz gráfica con validaciones y restricciones.
+Perfecto, Olman. Ahora asignaré aleatoriamente a cada estudiante un examen
+individual de los cuatro que definimos:
+
+• Plataforma de microcréditos rurales
+• Gestión de rutas de transporte rural
+• Sistema de inventario de insumos agrícolas
+• Gestión de cooperativas de ahorro
