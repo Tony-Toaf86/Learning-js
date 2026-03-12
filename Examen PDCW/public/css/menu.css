@@ -1,0 +1,80 @@
+:root {
+    --azul-oscuro: #1e3a8a;
+    --azul-primario: #3b82f6;
+    --azul-gradiente: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    --blanco: #ffffff;
+    --fondo: #f8fafc;
+    --texto-suave: #64748b;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    overflow-x: hidden;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background-color: var(--fondo);
+    color: #1e293b;
+}
+
+.hero {
+    background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(30, 58, 138, 0.9)), 
+                url('https://images.unsplash.com/photo-1454165833767-02750849226e?auto=format&fit=crop&w=1350&q=80');
+    background-size: cover;
+    background-position: center;
+    padding: 120px 20px 160px 20px; 
+    border-bottom-left-radius: 50% 30px;
+    border-bottom-right-radius: 50% 30px;
+}
+
+.hero-content h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: var(--blanco);
+    font-weight: 800;
+    letter-spacing: -1px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.accesos-rapidos {
+    width: 90%;
+    max-width: 1100px;
+    margin: -80px auto 50px auto;
+    position: relative;
+    z-index: 10;
+}
+
+.acceso-card {
+    background: var(--blanco);
+    padding: 50px 35px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+
+
+.acceso-card:hover .icon-container {
+    transform: rotate(0deg) scale(1.1);
+}
+
+.link-acceso {
+    display: inline-block;
+    background: var(--azul-gradiente);
+    color: var(--blanco) !important;
+    padding: 12px 30px;
+    border-radius: 12px;
+    transition: opacity 0.3s;
+    margin-top: 10px;
+}
+
+.link-acceso:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
