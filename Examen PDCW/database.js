@@ -1,14 +1,12 @@
 const mysql = require('mysql2');
 
-// Configuración de conexión
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'root', // Cambiar por la real
-    database: 'editar'
+    password: 'root',
+    database: 'cooperativa'
 });
 
-// Conectar a MySQL
 db.connect((err) => {
     if (err) {
         console.error('Error de conexión:', err);

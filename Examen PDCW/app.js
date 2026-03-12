@@ -1,23 +1,20 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
+const rutaSocios = require('./routes/socios.rute');
+const rutaAportaciones = require('./routes/aportaciones.rute');
 
-
-//modificar rutas 
-
-//para leer el index.html  
 const app = express();
-app.use(express.static('public')); 
+app.use(cors());
+app.use(express.json());
+app.use(express.static('public'));
 
+app.use('/api/socios', rutaSocios);
+app.use('/api/aportaciones', rutaAportaciones);
 
-app.use(cors());              // Permite peticiones externas
-app.use(bodyParser.json());   // Lee JSON del body
+app.get('/api', (req, res) => {
+    res.json({ mensaje: 'API de cooperativa activa' });
+});
 
-
-// Rutas
-
-
-// Puerto del servidor
 const PORT = 3000;
 
 app.listen(PORT, () => {

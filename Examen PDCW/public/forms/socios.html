@@ -4,63 +4,48 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Socios</title>
-    <link rel="stylesheet" href="../css/forms.css">
+	<link rel="stylesheet" href="../css/forms.css">
 </head>
 <body>
-	<div id="header-container"></div>
-
 	<main class="contenido-principal">
-		<h1>Gestión de Socios</h1>
+		<h1>Gestion de Socios</h1>
 	</main>
 
-<div class="container">
-    <form id="orgForm">
-        <input type="hidden" id="orgId">
-        <div class="form-group">
-            <label for="nombre">Nombre de Organización:</label>
-			<input type="text" id="nombre" name="nombre" required>
-        </div>
-        <div class="form-group">
-            <label for="contacto">Contacto (Tel/Email):</label>
-			<input type="text" id="contacto" name="contacto">
-		</div>
-		<div class="form-group">
-			<label for="tipo_convenio">Tipo de Convenio:</label>
-			<input type="text" id="tipo_convenio" name="tipo_convenio" maxlength="50">
-        </div>
-        <div class="form-actions">
-            <button type="submit">Guardar</button>
-            <button type="button" class="btn-actualizar">Actualizar</button>
-            <button type="button" class="btn-eliminar">Eliminar</button>
-            <button type="button" class="btn-listar">Listar</button>
-        </div>
-    </form>
-    <div id="resultado"></div>
-</div>
+	<div class="container">
+		<form id="socioForm">
+			<input type="hidden" id="id_socio" name="id_socio">
 
-	<div id="footer-container"></div>
+			<div class="form-group">
+				<label for="nombre_completo">Nombre completo:</label>
+				<input type="text" id="nombre_completo" name="nombre_completo" required maxlength="150">
+			</div>
 
-	<script>
-		async function cargarParcial(url, selector, contenedorId) {
-			try {
-				const respuesta = await fetch(url);
-				if (!respuesta.ok) throw new Error(`No se pudo cargar ${url}`);
+			<div class="form-group">
+				<label for="direccion">Direccion:</label>
+				<textarea id="direccion" name="direccion" placeholder="Ingrese la direccion del socio"></textarea>
+			</div>
 
-				const html = await respuesta.text();
-				const doc = new DOMParser().parseFromString(html, 'text/html');
-				const nodo = doc.querySelector(selector);
+			<div class="form-group">
+				<label for="telefono">Telefono:</label>
+				<input type="text" id="telefono" name="telefono" maxlength="20" placeholder="Ej. 0999999999">
+			</div>
 
-				document.getElementById(contenedorId).innerHTML = nodo
-					? nodo.outerHTML
-					: html;
-			} catch (error) {
-				console.error(error);
-			}
-		}
+			<div class="form-group">
+				<label for="fecha_ingreso">Fecha de ingreso:</label>
+				<input type="date" id="fecha_ingreso" name="fecha_ingreso">
+			</div>
 
-		cargarParcial('/parciales/header.html', 'header', 'header-container');
-		cargarParcial('/parciales/footer.html', 'footer', 'footer-container');
-	</script>
-	<script src="/formularios/organizaciones/organizaciones.js"></script>
+			<div class="form-actions">
+				<button type="button" class="btn-insertar">Insertar</button>
+				<button type="button" class="btn-actualizar">Actualizar</button>
+				<button type="button" class="btn-eliminar">Eliminar</button>
+				<button type="button" class="btn-listar">Listar</button>
+			</div>
+		</form>
+
+		<div id="resultado"></div>
+	</div>
+
+	<script src="../js/socios.js"></script>
 </body>
 </html>

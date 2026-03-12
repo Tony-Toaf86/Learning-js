@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const pedidosController = require('../controllers/pedidos.controller');
+const sociosController = require('../controllers/socios.controler');
 
-// Rutas CRUD
-router.post('/', pedidosController.insertar);
-router.get('/', pedidosController.listar);
-router.get('/:id', pedidosController.obtenerPorId);
-router.put('/:id', pedidosController.actualizar);
-router.delete('/:id', pedidosController.eliminar);
+router.post('/', sociosController.insertar);
+router.get('/', sociosController.listar);
+router.get('/:id', sociosController.obtenerPorId);
+router.put('/:id', sociosController.actualizar);
+router.delete('/:id', sociosController.eliminar);
 
 module.exports = router;

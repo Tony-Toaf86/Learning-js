@@ -1,20 +1,21 @@
 (() => {
-    const form = document.getElementById('beneficiarioForm');
+    const form = document.getElementById('aportacionForm');
     const resultado = document.getElementById('resultado');
 
     if (!form || !resultado) {
         return;
     }
 
-    const inputId = document.getElementById('beneficiarioId');
-    const inputNombre = document.getElementById('nombre_completo');
-    const inputEdad = document.getElementById('edad');
-    const inputProyectoId = document.getElementById('proyecto_id');
+    const inputId = document.getElementById('id_aportacion');
+    const inputSocio = document.getElementById('id_socio');
+    const inputMonto = document.getElementById('monto');
+    const inputTipo = document.getElementById('tipo_aportacion');
+    const inputFecha = document.getElementById('fecha_aportacion');
 
+    const btnInsertar = form.querySelector('.btn-insertar');
+    const btnActualizar = form.querySelector('.btn-actualizar');
     const btnEliminar = form.querySelector('.btn-eliminar');
     const btnListar = form.querySelector('.btn-listar');
-
-    let proyectosPorId = new Map();
 
     const normalizarTexto = (valor) => {
         const texto = String(valor || '').trim();
@@ -32,61 +33,6 @@
         resultado.innerHTML = `<p class="mensaje-${tipo}">${escaparHtml(mensaje)}</p>`;
     };
 
-    const cargarEnFormulario = (beneficiario) => {
-        inputId.value = beneficiario.id;
-        inputNombre.value = beneficiario.nombre_completo || '';
-        inputEdad.value = beneficiario.edad ?? '';
-        inputProyectoId.value = beneficiario.proyecto_id ?? '';
-    };
-
-    const limpiarFormulario = () => {
-        form.reset();
-        inputId.value = '';
-    };
-
-    const obtenerNombreProyecto = (proyectoId) => {
-        const proyecto = proyectosPorId.get(Number(proyectoId));
-        if (!proyecto) {
-            return proyectoId ? `#${proyectoId}` : '-';
-        }
-
-        return proyecto.nombre || `#${proyecto.id}`;
-    };
-
-    const renderizarListado = (beneficiarios) => {
-        if (!Array.isArray(beneficiarios) || !beneficiarios.length) {
-            resultado.innerHTML = '<p>No hay beneficiarios registrados.</p>';
-            return;
-        }
-
-        const filas = beneficiarios.map((beneficiario) => `
-            <tr>
-                <td>${beneficiario.id}</td>
-                <td>${escaparHtml(beneficiario.nombre_completo)}</td>
-                <td>${escaparHtml(beneficiario.edad)}</td>
-                <td>${escaparHtml(obtenerNombreProyecto(beneficiario.proyecto_id))}</td>
-                <td>
-                    <button type="button" class="btn-seleccionar" data-id="${beneficiario.id}">Seleccionar</button>
-                </td>
-            </tr>
-        `).join('');
-
-        resultado.innerHTML = `
-            <table class="tabla-beneficiarios">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Edad</th>
-                        <th>Proyecto</th>
-                        <th>Accion</th>
-                    </tr>
-                </thead>
-                <tbody>${filas}</tbody>
-            </table>
-        `;
-    };
-
     const manejarRespuesta = async (response) => {
         const texto = await response.text();
         let payload = {};
@@ -100,130 +46,190 @@
         }
 
         if (!response.ok) {
-            const mensaje = payload.error || payload.mensaje || 'No se pudo completar la operacion';
-            throw new Error(mensaje);
+            throw new Error(payload.error || payload.mensaje || 'No se pudo completar la operacion');
         }
 
         return payload;
     };
 
-    const obtenerPayloadFormulario = () => {
-        const nombre_completo = normalizarTexto(inputNombre.value);
-        const edadTexto = normalizarTexto(inputEdad.value);
-        const proyectoTexto = normalizarTexto(inputProyectoId.value);
+    const limpiarFormulario = () => {
+        form.reset();
+        inputId.value = '';
+    };
 
-        if (!nombre_completo) {
-            throw new Error('El nombre completo es obligatorio');
+    const cargarEnFormulario = (aportacion) => {
+        inputId.value = aportacion.id_aportacion;
+        inputSocio.value = String(aportacion.id_socio || '');
+        inputMonto.value = aportacion.monto;
+        inputTipo.value = aportacion.tipo_aportacion;
+
+        if (aportacion.fecha_aportacion) {
+            const fecha = new Date(aportacion.fecha_aportacion);
+            inputFecha.value = Number.isNaN(fecha.getTime())
+                ? String(aportacion.fecha_aportacion).slice(0, 10)
+                : fecha.toISOString().slice(0, 10);
+        } else {
+            inputFecha.value = '';
+        }
+    };
+
+    const obtenerPayload = () => {
+        const id_socio = Number(inputSocio.value);
+        const monto = Number(inputMonto.value);
+        const tipo_aportacion = normalizarTexto(inputTipo.value);
+        const fecha_aportacion = normalizarTexto(inputFecha.value);
+
+        if (!Number.isInteger(id_socio) || id_socio <= 0) {
+            throw new Error('Seleccione un socio valido');
         }
 
-        if (!edadTexto) {
-            throw new Error('La edad es obligatoria');
+        if (!Number.isFinite(monto) || monto <= 0) {
+            throw new Error('El monto debe ser mayor a 0');
         }
 
-        if (!proyectoTexto) {
-            throw new Error('Selecciona un proyecto');
+        if (!tipo_aportacion) {
+            throw new Error('Seleccione el tipo de aportacion');
         }
 
-        const edad = Number(edadTexto);
-        if (!Number.isInteger(edad) || edad < 0) {
-            throw new Error('La edad debe ser un numero entero mayor o igual a 0');
-        }
-
-        const proyecto_id = Number(proyectoTexto);
-        if (!Number.isInteger(proyecto_id) || proyecto_id <= 0) {
-            throw new Error('Selecciona un proyecto valido');
+        if (!fecha_aportacion) {
+            throw new Error('Seleccione la fecha de aportacion');
         }
 
         return {
-            nombre_completo,
-            edad,
-            proyecto_id
+            id_socio,
+            monto,
+            tipo_aportacion,
+            fecha_aportacion
         };
     };
 
-    const cargarProyectos = async () => {
-        const response = await fetch('/api/proyectos');
-        const proyectos = await manejarRespuesta(response);
-
-        proyectosPorId = new Map(
-            (Array.isArray(proyectos) ? proyectos : []).map((proyecto) => [Number(proyecto.id), proyecto])
-        );
-
-        const opciones = (Array.isArray(proyectos) ? proyectos : []).map((proyecto) => `
-            <option value="${proyecto.id}">${escaparHtml(proyecto.nombre || `Proyecto #${proyecto.id}`)}</option>
+    const cargarSocios = async () => {
+        const response = await fetch('/api/socios');
+        const socios = await manejarRespuesta(response);
+        const opciones = (Array.isArray(socios) ? socios : []).map((socio) => `
+            <option value="${socio.id_socio}">${escaparHtml(socio.nombre_completo)}</option>
         `).join('');
 
-        inputProyectoId.innerHTML = `
-            <option value="">Selecciona un proyecto</option>
+        inputSocio.innerHTML = `
+            <option value="">Seleccione un socio</option>
             ${opciones}
         `;
     };
 
-    const listarBeneficiarios = async () => {
+    const listarAportaciones = async () => {
         try {
-            const response = await fetch('/api/beneficiarios');
-            const beneficiarios = await manejarRespuesta(response);
-            renderizarListado(beneficiarios);
-        } catch (error) {
-            mostrarMensaje(error.message, 'error');
-        }
-    };
+            const response = await fetch('/api/aportaciones');
+            const aportaciones = await manejarRespuesta(response);
 
-    const obtenerBeneficiarioPorId = async (id) => {
-        const response = await fetch(`/api/beneficiarios/${id}`);
-        return manejarRespuesta(response);
-    };
-
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        try {
-            const id = Number(inputId.value);
-            const payload = obtenerPayloadFormulario();
-            const esEdicion = Number.isInteger(id) && id > 0;
-            const endpoint = esEdicion ? `/api/beneficiarios/${id}` : '/api/beneficiarios';
-            const metodo = esEdicion ? 'PUT' : 'POST';
-
-            const response = await fetch(endpoint, {
-                method: metodo,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            await manejarRespuesta(response);
-            mostrarMensaje(
-                esEdicion
-                    ? 'Beneficiario actualizado correctamente'
-                    : 'Beneficiario guardado correctamente',
-                'ok'
-            );
-            limpiarFormulario();
-            await listarBeneficiarios();
-        } catch (error) {
-            mostrarMensaje(error.message, 'error');
-        }
-    });
-
-    if (btnEliminar) {
-        btnEliminar.addEventListener('click', async () => {
-            const id = Number(inputId.value);
-
-            if (!Number.isInteger(id) || id <= 0) {
-                mostrarMensaje('Selecciona un beneficiario para eliminar', 'error');
+            if (!Array.isArray(aportaciones) || !aportaciones.length) {
+                resultado.innerHTML = '<p>No hay aportaciones registradas.</p>';
                 return;
             }
 
-            const confirmar = window.confirm(`Se eliminara el beneficiario #${id}. Deseas continuar?`);
-            if (!confirmar) {
+            const filas = aportaciones.map((aportacion) => {
+                let fecha = '-';
+                if (aportacion.fecha_aportacion) {
+                    const fechaObj = new Date(aportacion.fecha_aportacion);
+                    fecha = Number.isNaN(fechaObj.getTime())
+                        ? String(aportacion.fecha_aportacion).slice(0, 10)
+                        : fechaObj.toISOString().slice(0, 10);
+                }
+
+                return `
+                    <tr>
+                        <td>${aportacion.id_aportacion}</td>
+                        <td>${escaparHtml(aportacion.nombre_completo || '-')}</td>
+                        <td>${Number(aportacion.monto).toFixed(2)}</td>
+                        <td>${escaparHtml(aportacion.tipo_aportacion)}</td>
+                        <td>${escaparHtml(fecha)}</td>
+                        <td>
+                            <button type="button" class="btn-seleccionar" data-id="${aportacion.id_aportacion}">Seleccionar</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            resultado.innerHTML = `
+                <table class="tabla-aportaciones">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Socio</th>
+                            <th>Monto</th>
+                            <th>Tipo</th>
+                            <th>Fecha</th>
+                            <th>Accion</th>
+                        </tr>
+                    </thead>
+                    <tbody>${filas}</tbody>
+                </table>
+            `;
+        } catch (error) {
+            mostrarMensaje(error.message, 'error');
+        }
+    };
+
+    if (btnInsertar) {
+        btnInsertar.addEventListener('click', async () => {
+            try {
+                const payload = obtenerPayload();
+                const response = await fetch('/api/aportaciones', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                await manejarRespuesta(response);
+                mostrarMensaje('Aportacion registrada correctamente', 'ok');
+                limpiarFormulario();
+                await listarAportaciones();
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        });
+    }
+
+    if (btnActualizar) {
+        btnActualizar.addEventListener('click', async () => {
+            const id_aportacion = Number(inputId.value);
+            if (!Number.isInteger(id_aportacion) || id_aportacion <= 0) {
+                mostrarMensaje('Seleccione una aportacion de la lista para actualizar', 'error');
+                return;
+            }
+            try {
+                const payload = obtenerPayload();
+                const response = await fetch(`/api/aportaciones/${id_aportacion}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                await manejarRespuesta(response);
+                mostrarMensaje('Aportacion actualizada correctamente', 'ok');
+                limpiarFormulario();
+                await listarAportaciones();
+            } catch (error) {
+                mostrarMensaje(error.message, 'error');
+            }
+        });
+    }
+
+    if (btnEliminar) {
+        btnEliminar.addEventListener('click', async () => {
+            const id_aportacion = Number(inputId.value);
+            if (!Number.isInteger(id_aportacion) || id_aportacion <= 0) {
+                mostrarMensaje('Seleccione una aportacion para eliminar', 'error');
+                return;
+            }
+
+            if (!window.confirm(`Se eliminara la aportacion #${id_aportacion}. Desea continuar?`)) {
                 return;
             }
 
             try {
-                const response = await fetch(`/api/beneficiarios/${id}`, { method: 'DELETE' });
+                const response = await fetch(`/api/aportaciones/${id_aportacion}`, { method: 'DELETE' });
                 await manejarRespuesta(response);
-                mostrarMensaje('Beneficiario eliminado correctamente', 'ok');
+                mostrarMensaje('Aportacion eliminada correctamente', 'ok');
                 limpiarFormulario();
-                await listarBeneficiarios();
+                await listarAportaciones();
             } catch (error) {
                 mostrarMensaje(error.message, 'error');
             }
@@ -231,7 +237,7 @@
     }
 
     if (btnListar) {
-        btnListar.addEventListener('click', listarBeneficiarios);
+        btnListar.addEventListener('click', listarAportaciones);
     }
 
     resultado.addEventListener('click', async (event) => {
@@ -240,16 +246,17 @@
             return;
         }
 
-        const id = Number(boton.dataset.id);
-        if (!Number.isInteger(id) || id <= 0) {
-            mostrarMensaje('ID de beneficiario invalido', 'error');
+        const id_aportacion = Number(boton.dataset.id);
+        if (!Number.isInteger(id_aportacion) || id_aportacion <= 0) {
+            mostrarMensaje('ID de aportacion invalido', 'error');
             return;
         }
 
         try {
-            const beneficiario = await obtenerBeneficiarioPorId(id);
-            cargarEnFormulario(beneficiario);
-            mostrarMensaje(`Beneficiario #${id} cargado en el formulario`, 'ok');
+            const response = await fetch(`/api/aportaciones/${id_aportacion}`);
+            const aportacion = await manejarRespuesta(response);
+            cargarEnFormulario(aportacion);
+            mostrarMensaje(`Aportacion #${id_aportacion} cargada en el formulario`, 'ok');
         } catch (error) {
             mostrarMensaje(error.message, 'error');
         }
@@ -257,8 +264,8 @@
 
     (async () => {
         try {
-            await cargarProyectos();
-            await listarBeneficiarios();
+            await cargarSocios();
+            await listarAportaciones();
         } catch (error) {
             mostrarMensaje(error.message, 'error');
         }
